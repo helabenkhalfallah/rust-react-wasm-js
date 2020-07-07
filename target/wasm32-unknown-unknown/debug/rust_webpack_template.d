@@ -1,0 +1,1 @@
+/Users/helabenkhalfallah/Desktop/github_workspace/rust-react-wasm-js/target/wasm32-unknown-unknown/debug/rust_webpack_template.wasm: /Users/helabenkhalfallah/Desktop/github_workspace/rust-react-wasm-js/src/lib.rs
