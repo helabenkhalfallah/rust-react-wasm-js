@@ -38,7 +38,7 @@ class UserListPage extends Component {
     if(collect_numbers){
       const entries = [
         ...'abcdefghijklmnopqrstuvwxyz'.split(''),
-        ...[...Array(400)].map(e=>~~(Math.random() * 400)),
+        ...[...Array(400000)].map(e=>~~(Math.random() * 4000)),
         ...'abcdefghijklmnopqrstuvwxyz'.split(''),
       ];
       console.log("entries : ", entries);

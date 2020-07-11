@@ -21,10 +21,10 @@ pub fn greet() {
 }
 
 #[wasm_bindgen]
-pub fn collect_numbers(some_iterable: &JsValue) -> Result<js_sys::Array, JsValue> {
+pub fn collect_numbers(numbers: &JsValue) -> Result<js_sys::Array, JsValue> {  
     let nums = js_sys::Array::new();
 
-    let iterator = js_sys::try_iter(some_iterable)?.ok_or_else(|| {
+    let iterator = js_sys::try_iter(numbers)?.ok_or_else(|| {
         "need to pass iterable JS values!"
     })?;
 
@@ -37,7 +37,7 @@ pub fn collect_numbers(some_iterable: &JsValue) -> Result<js_sys::Array, JsValue
         if x.as_f64().is_some() {
             nums.push(&x);
         }
-    }
+    } 
 
     Ok(nums)
 }
