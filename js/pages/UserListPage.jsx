@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import {
   Button,
 } from "antd";
+import data from './MockData';
 
 class UserListPage extends Component {
   constructor(props) {
@@ -31,15 +32,40 @@ class UserListPage extends Component {
   render() {
     const { wasm = {} } = this.state;
     const {
+      greet,
       collect_numbers,
-      greet
+      trasfom_me
     } = wasm || {};
     console.log("wasm : ", wasm);
+    if(trasfom_me){
+      console.log("data : ", data);
+    
+      const jsMapT0 = performance.now();
+      const resultJSMapped = data
+                              .sort((a,b) => a.id - b.id)
+                              .map(item => ({
+                                album_id: item.album_id,
+                                id: item.id,
+                                value: `id: ${item.id}, value: ${item.title}`,
+                                title: item.title,
+                                thumbnail_url: item.thumbnail_url,
+                                url: item.url,
+                              }))
+                              .filter(item => item.id > 200)
+      const jsMapT1 = performance.now();
+      console.log("Call to JS map took " + (jsMapT1 - jsMapT0) + " milliseconds.")
+      console.log("resultJSMapped : ", resultJSMapped); /* */
+
+      const wasmT0 = performance.now();
+      const resultWASMMapped = trasfom_me(data);
+      const wasmT1 = performance.now();
+      console.log("Call to Rust trasfom_me took " + (wasmT1 - wasmT0) + " milliseconds.");
+      console.log("resultWASMMapped : ", resultWASMMapped);
+    }
+
     if(collect_numbers){
       const entries = [
-        ...'abcdefghijklmnopqrstuvwxyz'.split(''),
-        ...[...Array(400000)].map(e=>~~(Math.random() * 4000)),
-        ...'abcdefghijklmnopqrstuvwxyz'.split(''),
+        ...[...Array(40000)].map(e=>~~(Math.random() * 4000)),
       ];
       console.log("entries : ", entries);
 
@@ -47,7 +73,7 @@ class UserListPage extends Component {
       const resultFilter = entries.filter(item => typeof item === 'number')
       const jsFilterT1 = performance.now();
       console.log("Call to JS filter took " + (jsFilterT1 - jsFilterT0) + " milliseconds.")
-      console.log("resultFilter : ", resultFilter);
+      console.log("resultFilter : ", resultFilter); /* */
 
       const wasmT0 = performance.now();
       const resultWasm = collect_numbers(entries);
