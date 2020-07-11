@@ -1,6 +1,6 @@
+extern crate js_sys;
 use wasm_bindgen::prelude::*;
 use web_sys::console;
-use js_sys::{Array};
 
 // When the `wee_alloc` feature is enabled, this uses `wee_alloc` as the global
 // allocator.
@@ -18,6 +18,28 @@ extern {
 #[wasm_bindgen]
 pub fn greet() {
     alert("Hello, rust-wasm-frontend!");
+}
+
+#[wasm_bindgen]
+pub fn collect_numbers(some_iterable: &JsValue) -> Result<js_sys::Array, JsValue> {
+    let nums = js_sys::Array::new();
+
+    let iterator = js_sys::try_iter(some_iterable)?.ok_or_else(|| {
+        "need to pass iterable JS values!"
+    })?;
+
+    for x in iterator {
+        // If the iterator's `next` method throws an error, propagate it
+        // up to the caller.
+        let x = x?;
+
+        // If `x` is a number, add it to our array of numbers!
+        if x.as_f64().is_some() {
+            nums.push(&x);
+        }
+    }
+
+    Ok(nums)
 }
 
 // This is like the `main` function, except for JavaScript.

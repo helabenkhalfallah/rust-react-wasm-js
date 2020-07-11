@@ -82,10 +82,13 @@ module.exports = {
     ],
   },
   plugins: [
-    new CopyPlugin([
-      path.resolve(__dirname, "static")
-    ]),
-
+    new CopyPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, "static"),
+        },
+      ],
+    }),
     new WasmPackPlugin({
       crateDirectory: __dirname,
     }),
