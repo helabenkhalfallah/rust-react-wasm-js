@@ -67,7 +67,7 @@ pub struct ElementOutput {
 }
 
 #[wasm_bindgen]
-pub fn trasfom_me(js_objects: &JsValue) -> JsValue {
+pub fn transfom_me(js_objects: &JsValue) -> JsValue {
     let mut elements: Vec<Element> = js_objects.into_serde().unwrap();
     elements.sort_by(|a, b| a.id.partial_cmp(&b.id).unwrap());
     

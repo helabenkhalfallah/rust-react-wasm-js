@@ -34,10 +34,10 @@ class UserListPage extends Component {
     const {
       greet,
       collect_numbers,
-      trasfom_me
+      transfom_me
     } = wasm || {};
     console.log("wasm : ", wasm);
-    if(trasfom_me){
+    if(transfom_me){
       console.log("data : ", data);
     
       const jsMapT0 = performance.now();
@@ -57,9 +57,9 @@ class UserListPage extends Component {
       console.log("resultJSMapped : ", resultJSMapped); /* */
 
       const wasmT0 = performance.now();
-      const resultWASMMapped = trasfom_me(data);
+      const resultWASMMapped = transfom_me(data);
       const wasmT1 = performance.now();
-      console.log("Call to Rust trasfom_me took " + (wasmT1 - wasmT0) + " milliseconds.");
+      console.log("Call to Rust WASM transfom_me took " + (wasmT1 - wasmT0) + " milliseconds.");
       console.log("resultWASMMapped : ", resultWASMMapped);
     }
 
