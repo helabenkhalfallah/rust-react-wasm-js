@@ -34,14 +34,18 @@ class UserListPage extends Component {
     const {
       greet,
       collect_numbers,
-      transfom_me
+      transform_me
     } = wasm || {};
     console.log("wasm : ", wasm);
-    if(transfom_me){
+    if(transform_me){
       console.log("data : ", data);
     
+      const moreBigData = [
+        ...data,
+        ...data,
+      ]
       const jsMapT0 = performance.now();
-      const resultJSMapped = data
+      const resultJSMapped = moreBigData
                               .sort((a,b) => a.id - b.id)
                               .map(item => ({
                                 album_id: item.album_id,
@@ -57,9 +61,9 @@ class UserListPage extends Component {
       console.log("resultJSMapped : ", resultJSMapped); /* */
 
       const wasmT0 = performance.now();
-      const resultWASMMapped = transfom_me(data);
+      const resultWASMMapped = transform_me(moreBigData);
       const wasmT1 = performance.now();
-      console.log("Call to Rust WASM transfom_me took " + (wasmT1 - wasmT0) + " milliseconds.");
+      console.log("Call to Rust WASM transform_me took " + (wasmT1 - wasmT0) + " milliseconds.");
       console.log("resultWASMMapped : ", resultWASMMapped);
     }
 
