@@ -48,42 +48,114 @@ pub fn collect_numbers(numbers: &JsValue) -> Result<Array, JsValue> {
 extern crate serde_derive;
 
 #[derive(Serialize, Deserialize)]
-pub struct Element {
-    album_id: i32,
-    id: i32,
+pub struct Photo {
+    albumId: i64,
+    id: i64,
     title: String,
     url: String,
-    thumbnail_url: String,
+    thumbnailUrl: String,
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct ElementOutput {
-    album_id: i32,
-    id: i32,
+pub struct PhotoOutput {
+    albumId: i64,
+    id: i64,
     title: String,
     url: String,
-    thumbnail_url: String,
+    thumbnailUrl: String,
     value: String
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Geo {
+    pub lat: String,
+    pub lng: String
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Address {
+    pub street: String,
+    pub suite: String,
+    pub city: String,
+    pub zipcode: String,
+    pub geo: Geo
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Company {
+    pub name: String,
+    pub catchPhrase: String,
+    pub bs: String
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct User {
+    pub id: i64,
+    pub name: String,
+    pub username: String,
+    pub email: String,
+    pub address: Address,
+    pub phone: String,
+    pub website: String,
+    pub company: Company,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct SocialFriend {
+    pub id: i64,
+    pub name: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct SocialUser {
+    pub _id: String,
+    pub index: i64,
+    pub guid: String,
+    pub isActive: bool,
+    pub balance: String,
+    pub picture: String,
+    pub age: i32,
+    pub eyeColor: String,
+    pub name: String,
+    pub gender: String,
+    pub company: String,
+    pub email: String,
+    pub phone: String,
+    pub address: String,
+    pub about: String,
+    pub registered: String,
+    pub latitude: f64,
+    pub longitude: f64,
+    pub greeting: String,
+    pub favoriteFruit: String,
+    pub friends: Vec<SocialFriend>,
+    pub tags: Vec<String>,
+}
+    
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ServerError {
+    pub message: String,
+    pub status: i32,
 }
 
 #[wasm_bindgen]
 pub fn transform_me(js_objects: &JsValue) -> JsValue {
-    let mut elements: Vec<Element> = js_objects.into_serde().unwrap();
+    let mut elements: Vec<Photo> = js_objects.into_serde().unwrap();
     elements.sort_by(|a, b| a.id.partial_cmp(&b.id).unwrap());
     
-    let values: Vec<ElementOutput> = elements
+    let values: Vec<PhotoOutput> = elements
         .iter()
         .map(|e| {
             let _title = &e.title;
-            let _thumbnail_url = &e.thumbnail_url;
+            let _thumbnail_url = &e.thumbnailUrl;
             let _url = &e.url;
             let _id = e.id;
-            ElementOutput{
-                album_id: e.album_id,
+            PhotoOutput{
+                albumId: e.albumId,
                 id: _id,
                 value: format!("id: {}, value: {}", _title, _id),
                 title: format!("{}", _title),
-                thumbnail_url: format!("{}", _thumbnail_url),
+                thumbnailUrl: format!("{}", _thumbnail_url),
                 url: format!("{}", _url),
             }
         })
@@ -95,25 +167,10 @@ pub fn transform_me(js_objects: &JsValue) -> JsValue {
     JsValue::from_serde(&values).unwrap()
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct User {
-    pub first_name: String,
-    pub last_name: String,
-    pub user_name: String,
-    pub password: String,
-    pub email: String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct UserError {
-    pub message: String,
-    pub status: i32,
-}
-
 #[wasm_bindgen]
 pub async fn get_all_users() -> Result<JsValue, JsValue> {
     let result = reqwest::Client::new()
-        .get("http://localhost:4000/get-all-users")
+        .get("https://jsonplaceholder.typicode.com/users")
         .send()
         .await;
 
@@ -123,14 +180,61 @@ pub async fn get_all_users() -> Result<JsValue, JsValue> {
                 let users: Vec<User>  = serde_json::from_str(&text).unwrap();
                 Ok(JsValue::from_serde(&users).unwrap())
             },
-            Err(e) => {
-                println!("Error while getting, {:?}", e);
+            Err(_e) => {
                 let message = "".to_string();
-                let empty_users = UserError {
+                let empty_users = ServerError {
                     message: message,
                     status: 200
                 };
                 Ok(JsValue::from_serde(&empty_users).unwrap())
+            }
+        }
+}
+
+#[wasm_bindgen]
+pub async fn get_all_photos() -> Result<JsValue, JsValue> {
+    let result = reqwest::Client::new()
+        .get("https://jsonplaceholder.typicode.com/photos")
+        .send()
+        .await;
+
+        match result {
+            Ok(result) => {
+                let text = result.text().await.unwrap();
+                let photos: Vec<Photo>  = serde_json::from_str(&text).unwrap();
+                Ok(JsValue::from_serde(&photos).unwrap())
+            },
+            Err(_e) => {
+                let message = "".to_string();
+                let empty_photo = ServerError {
+                    message: message,
+                    status: 200
+                };
+                Ok(JsValue::from_serde(&empty_photo).unwrap())
+            }
+        }
+}
+
+#[wasm_bindgen]
+pub async fn get_all_socials() -> Result<JsValue, JsValue> {
+    let result = reqwest::Client::new()
+        .get("http://localhost:3000/socials")
+        .send()
+        .await;
+
+        match result {
+            Ok(result) => {
+                let text = result.text().await.unwrap();
+                let socials: Vec<SocialUser>  = serde_json::from_str(&text).unwrap();
+                Ok(JsValue::from_serde(&socials).unwrap())
+            },
+            Err(_e) => {
+                let message = "".to_string();
+                let empty_social = ServerError {
+                    message: message,
+                    status: 200
+                };
+                Ok(JsValue::from_serde(&empty_social).unwrap())
             }
         }
 }

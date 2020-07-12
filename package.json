@@ -5,6 +5,7 @@
   "scripts": {
     "build": "rimraf dist pkg && webpack",
     "start": "rimraf dist pkg && webpack-dev-server --open -d",
+    "start:dev:server": "json-server --watch ./data/db.json",
     "eslint": "./node_modules/.bin/eslint src/**",
     "eslint:fix": "./node_modules/.bin/eslint  --fix  src/**",
     "test": "cargo test && wasm-pack test --headless"
@@ -46,7 +47,8 @@
   },
   "dependencies": {
     "antd": "=3.25.3",
-    "axios": "=0.19.0",
+    "axios": "^0.19.0",
+    "json-server": "^0.16.1",
     "prop-types": "=15.7.2",
     "react": "=16.11.0",
     "react-dom": "=16.11.0",

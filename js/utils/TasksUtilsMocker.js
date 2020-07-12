@@ -1,4 +1,5 @@
 import MockData from './MockData';
+import axios from 'axios';
 
 const arrayBigTasks = (wasm) => {
     const {
@@ -55,8 +56,119 @@ const arrayBigTasks = (wasm) => {
 }
 
 
+const jsRequestUsers = (wasm) => {
+  const {
+    get_all_users,
+  } = wasm || {};
+  const wasmT0 = performance.now();
+
+  if(get_all_users){
+      axios
+          .get('https://jsonplaceholder.typicode.com/users', { crossdomain: true })
+          .then(data => {
+            const wasmT1 = performance.now();
+            console.log("JSRequestUsers took " + (wasmT1 - wasmT0) + " milliseconds.");
+            console.log('JSRequestUsers data : ', data);
+          })
+          .catch(error => console.log('JSRequestUsers error : ', error));
+  }
+};
+
+const wasmRequestUsers = (wasm) => {
+    const {
+      get_all_users,
+    } = wasm || {};
+    const wasmT0 = performance.now();
+
+    if(get_all_users){
+      get_all_users()
+      .then(data => {
+        const wasmT1 = performance.now();
+        console.log("wasmRequestUsers took " + (wasmT1 - wasmT0) + " milliseconds.");
+        console.log('wasmRequestUsers data : ', data);
+      })
+      .catch(error => console.log('wasmRequestUsers error : ', error));
+    }
+};
+
+const jsRequestPhotos = (wasm) => {
+  const {
+    get_all_photos,
+  } = wasm || {};
+  const wasmT0 = performance.now();
+
+  if(get_all_photos){
+      axios
+          .get('https://jsonplaceholder.typicode.com/photos', { crossdomain: true })
+          .then(data => {
+            const wasmT1 = performance.now();
+            console.log("jsRequestPhotos took " + (wasmT1 - wasmT0) + " milliseconds.");
+            console.log('jsRequestPhotos data : ', data);
+          })
+          .catch(error => console.log('jsRequestPhotos error : ', error));
+  }
+};
+
+const wasmRequestPhotos = (wasm) => {
+    const {
+      get_all_photos,
+    } = wasm || {};
+    const wasmT0 = performance.now();
+
+    if(get_all_photos){
+      get_all_photos()
+      .then(data => {
+        const wasmT1 = performance.now();
+        console.log("wasmRequestPhotos took " + (wasmT1 - wasmT0) + " milliseconds.");
+        console.log('wasmRequestPhotos data : ', data);
+      })
+      .catch(error => console.log('wasmRequestPhotos error : ', error));
+    }
+};
+
+const jsRequestSocials = (wasm) => {
+  const {
+    get_all_socials,
+  } = wasm || {};
+  const wasmT0 = performance.now();
+
+  if(get_all_socials){
+      axios
+          .get('http://localhost:3000/socials', { crossdomain: true })
+          .then(data => {
+            const wasmT1 = performance.now();
+            console.log("jsRequestSocials took " + (wasmT1 - wasmT0) + " milliseconds.");
+            console.log('jsRequestSocials data : ', data);
+          })
+          .catch(error => console.log('jsRequestSocials error : ', error));
+  }
+};
+
+const wasmRequestSocials = (wasm) => {
+    const {
+      get_all_socials,
+    } = wasm || {};
+    const wasmT0 = performance.now();
+
+    if(get_all_socials){
+      get_all_socials()
+      .then(data => {
+        const wasmT1 = performance.now();
+        console.log("wasmRequestSocials took " + (wasmT1 - wasmT0) + " milliseconds.");
+        console.log('wasmRequestSocials data : ', data);
+      })
+      .catch(error => console.log('wasmRequestSocials error : ', error));
+    }
+};
+
 const TasksUtilsMocker = {
     arrayBigTasks,
+    jsRequestUsers,
+    wasmRequestUsers,
+    jsRequestPhotos,
+    wasmRequestPhotos,
+    jsRequestSocials,
+    wasmRequestSocials,
 };
 
 export default TasksUtilsMocker;

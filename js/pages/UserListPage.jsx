@@ -8,6 +8,12 @@ import {
 
 const {
   arrayBigTasks,
+  jsRequestUsers,
+  wasmRequestUsers,
+  jsRequestPhotos,
+  wasmRequestPhotos,
+  jsRequestSocials,
+  wasmRequestSocials,
 } = TasksUtilsMocker;
 
 class UserListPage extends Component {
@@ -39,16 +45,19 @@ class UserListPage extends Component {
     const { wasm = {} } = this.state;
     const {
       greet,
-      get_all_users,
     } = wasm || {};
     console.log("wasm : ", wasm);
-    
+  
+    // jsRequestUsers(wasm);
+    // wasmRequestUsers(wasm);
+
+    // jsRequestPhotos(wasm);
+    // wasmRequestPhotos(wasm);
+
+    jsRequestSocials(wasm);
+    wasmRequestSocials(wasm);
+
     // arrayBigTasks(wasm);
-    if(get_all_users){
-      get_all_users()
-      .then(data => console.log('data : ', data))
-      .catch(error => console.log('error : ', error));
-    }
 
     return (
       <div className="App">
