@@ -2,7 +2,13 @@ import React, { Component } from "react";
 import {
   Button,
 } from "antd";
-import data from './MockData';
+import {
+  TasksUtilsMocker,
+}from '../utils'
+
+const {
+  arrayBigTasks,
+} = TasksUtilsMocker;
 
 class UserListPage extends Component {
   constructor(props) {
@@ -33,58 +39,17 @@ class UserListPage extends Component {
     const { wasm = {} } = this.state;
     const {
       greet,
-      collect_numbers,
-      transform_me
+      get_all_users,
     } = wasm || {};
     console.log("wasm : ", wasm);
-    if(transform_me){
-      console.log("data : ", data);
     
-      const moreBigData = [
-        ...data,
-        ...data,
-      ]
-      const jsMapT0 = performance.now();
-      const resultJSMapped = moreBigData
-                              .sort((a,b) => a.id - b.id)
-                              .map(item => ({
-                                album_id: item.album_id,
-                                id: item.id,
-                                value: `id: ${item.id}, value: ${item.title}`,
-                                title: item.title,
-                                thumbnail_url: item.thumbnail_url,
-                                url: item.url,
-                              }))
-                              .filter(item => item.id > 200)
-      const jsMapT1 = performance.now();
-      console.log("Call to JS map took " + (jsMapT1 - jsMapT0) + " milliseconds.")
-      console.log("resultJSMapped : ", resultJSMapped); /* */
-
-      const wasmT0 = performance.now();
-      const resultWASMMapped = transform_me(moreBigData);
-      const wasmT1 = performance.now();
-      console.log("Call to Rust WASM transform_me took " + (wasmT1 - wasmT0) + " milliseconds.");
-      console.log("resultWASMMapped : ", resultWASMMapped);
+    // arrayBigTasks(wasm);
+    if(get_all_users){
+      get_all_users()
+      .then(data => console.log('data : ', data))
+      .catch(error => console.log('error : ', error));
     }
 
-    if(collect_numbers){
-      const entries = [
-        ...[...Array(40000)].map(e=>~~(Math.random() * 4000)),
-      ];
-      console.log("entries : ", entries);
-
-      const jsFilterT0 = performance.now();
-      const resultFilter = entries.filter(item => typeof item === 'number')
-      const jsFilterT1 = performance.now();
-      console.log("Call to JS filter took " + (jsFilterT1 - jsFilterT0) + " milliseconds.")
-      console.log("resultFilter : ", resultFilter); /* */
-
-      const wasmT0 = performance.now();
-      const resultWasm = collect_numbers(entries);
-      const wasmT1 = performance.now();
-      console.log("Call to Rust collect_numbers took " + (wasmT1 - wasmT0) + " milliseconds.");
-      console.log("resultWasm : ", resultWasm);
-    }
     return (
       <div className="App">
         <header className="App-header">

@@ -95,6 +95,46 @@ pub fn transform_me(js_objects: &JsValue) -> JsValue {
     JsValue::from_serde(&values).unwrap()
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct User {
+    pub first_name: String,
+    pub last_name: String,
+    pub user_name: String,
+    pub password: String,
+    pub email: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct UserError {
+    pub message: String,
+    pub status: i32,
+}
+
+#[wasm_bindgen]
+pub async fn get_all_users() -> Result<JsValue, JsValue> {
+    let result = reqwest::Client::new()
+        .get("http://localhost:4000/get-all-users")
+        .send()
+        .await;
+
+        match result {
+            Ok(result) => {
+                let text = result.text().await.unwrap();
+                let users: Vec<User>  = serde_json::from_str(&text).unwrap();
+                Ok(JsValue::from_serde(&users).unwrap())
+            },
+            Err(e) => {
+                println!("Error while getting, {:?}", e);
+                let message = "".to_string();
+                let empty_users = UserError {
+                    message: message,
+                    status: 200
+                };
+                Ok(JsValue::from_serde(&empty_users).unwrap())
+            }
+        }
+}
+
 // This is like the `main` function, except for JavaScript.
 #[wasm_bindgen(start)]
 pub fn main_js() -> Result<(), JsValue> {
