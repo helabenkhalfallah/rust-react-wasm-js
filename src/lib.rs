@@ -1,8 +1,8 @@
-extern crate serde_json;
 extern crate js_sys;
+extern crate serde_json;
+use js_sys::Array;
 use wasm_bindgen::prelude::*;
 use web_sys::console;
-use js_sys::Array;
 
 // When the `wee_alloc` feature is enabled, this uses `wee_alloc` as the global
 // allocator.
@@ -13,7 +13,7 @@ use js_sys::Array;
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 #[wasm_bindgen]
-extern {
+extern "C" {
     fn alert(s: &str);
 }
 
@@ -23,12 +23,10 @@ pub fn greet() {
 }
 
 #[wasm_bindgen]
-pub fn collect_numbers(numbers: &JsValue) -> Result<Array, JsValue> {  
+pub fn collect_numbers(numbers: &JsValue) -> Result<Array, JsValue> {
     let nums = Array::new();
 
-    let iterator = js_sys::try_iter(numbers)?.ok_or_else(|| {
-        "need to pass iterable JS values!"
-    })?;
+    let iterator = js_sys::try_iter(numbers)?.ok_or_else(|| "need to pass iterable JS values!")?;
 
     for x in iterator {
         // If the iterator's `next` method throws an error, propagate it
@@ -39,10 +37,10 @@ pub fn collect_numbers(numbers: &JsValue) -> Result<Array, JsValue> {
         if x.as_f64().is_some() {
             nums.push(&x);
         }
-    } 
+    }
 
     Ok(nums)
-} 
+}
 
 #[macro_use]
 extern crate serde_derive;
@@ -63,13 +61,13 @@ pub struct PhotoOutput {
     title: String,
     url: String,
     thumbnailUrl: String,
-    value: String
+    value: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Geo {
     pub lat: String,
-    pub lng: String
+    pub lng: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -78,14 +76,14 @@ pub struct Address {
     pub suite: String,
     pub city: String,
     pub zipcode: String,
-    pub geo: Geo
+    pub geo: Geo,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Company {
     pub name: String,
     pub catchPhrase: String,
-    pub bs: String
+    pub bs: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -131,7 +129,7 @@ pub struct SocialUser {
     pub friends: Vec<SocialFriend>,
     pub tags: Vec<String>,
 }
-    
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ServerError {
     pub message: String,
@@ -142,7 +140,7 @@ pub struct ServerError {
 pub fn transform_me(js_objects: &JsValue) -> JsValue {
     let mut elements: Vec<Photo> = js_objects.into_serde().unwrap();
     elements.sort_by(|a, b| a.id.partial_cmp(&b.id).unwrap());
-    
+
     let values: Vec<PhotoOutput> = elements
         .iter()
         .map(|e| {
@@ -150,7 +148,7 @@ pub fn transform_me(js_objects: &JsValue) -> JsValue {
             let _thumbnail_url = &e.thumbnailUrl;
             let _url = &e.url;
             let _id = e.id;
-            PhotoOutput{
+            PhotoOutput {
                 albumId: e.albumId,
                 id: _id,
                 value: format!("id: {}, value: {}", _title, _id),
@@ -159,11 +157,9 @@ pub fn transform_me(js_objects: &JsValue) -> JsValue {
                 url: format!("{}", _url),
             }
         })
-        .filter(|e| {
-            e.id > 200
-        })
+        .filter(|e| e.id > 200)
         .collect();
-     
+
     JsValue::from_serde(&values).unwrap()
 }
 
@@ -174,21 +170,21 @@ pub async fn get_all_users() -> Result<JsValue, JsValue> {
         .send()
         .await;
 
-        match result {
-            Ok(result) => {
-                let text = result.text().await.unwrap();
-                let users: Vec<User>  = serde_json::from_str(&text).unwrap();
-                Ok(JsValue::from_serde(&users).unwrap())
-            },
-            Err(_e) => {
-                let message = "".to_string();
-                let empty_users = ServerError {
-                    message: message,
-                    status: 200
-                };
-                Ok(JsValue::from_serde(&empty_users).unwrap())
-            }
+    match result {
+        Ok(result) => {
+            let text = result.text().await.unwrap();
+            let users: Vec<User> = serde_json::from_str(&text).unwrap();
+            Ok(JsValue::from_serde(&users).unwrap())
         }
+        Err(_e) => {
+            let message = "".to_string();
+            let empty_users = ServerError {
+                message: message,
+                status: 200,
+            };
+            Ok(JsValue::from_serde(&empty_users).unwrap())
+        }
+    }
 }
 
 #[wasm_bindgen]
@@ -198,21 +194,21 @@ pub async fn get_all_photos() -> Result<JsValue, JsValue> {
         .send()
         .await;
 
-        match result {
-            Ok(result) => {
-                let text = result.text().await.unwrap();
-                let photos: Vec<Photo>  = serde_json::from_str(&text).unwrap();
-                Ok(JsValue::from_serde(&photos).unwrap())
-            },
-            Err(_e) => {
-                let message = "".to_string();
-                let empty_photo = ServerError {
-                    message: message,
-                    status: 200
-                };
-                Ok(JsValue::from_serde(&empty_photo).unwrap())
-            }
+    match result {
+        Ok(result) => {
+            let text = result.text().await.unwrap();
+            let photos: Vec<Photo> = serde_json::from_str(&text).unwrap();
+            Ok(JsValue::from_serde(&photos).unwrap())
         }
+        Err(_e) => {
+            let message = "".to_string();
+            let empty_photo = ServerError {
+                message: message,
+                status: 200,
+            };
+            Ok(JsValue::from_serde(&empty_photo).unwrap())
+        }
+    }
 }
 
 #[wasm_bindgen]
@@ -222,21 +218,21 @@ pub async fn get_all_socials() -> Result<JsValue, JsValue> {
         .send()
         .await;
 
-        match result {
-            Ok(result) => {
-                let text = result.text().await.unwrap();
-                let socials: Vec<SocialUser>  = serde_json::from_str(&text).unwrap();
-                Ok(JsValue::from_serde(&socials).unwrap())
-            },
-            Err(_e) => {
-                let message = "".to_string();
-                let empty_social = ServerError {
-                    message: message,
-                    status: 200
-                };
-                Ok(JsValue::from_serde(&empty_social).unwrap())
-            }
+    match result {
+        Ok(result) => {
+            let text = result.text().await.unwrap();
+            let socials: Vec<SocialUser> = serde_json::from_str(&text).unwrap();
+            Ok(JsValue::from_serde(&socials).unwrap())
         }
+        Err(_e) => {
+            let message = "".to_string();
+            let empty_social = ServerError {
+                message: message,
+                status: 200,
+            };
+            Ok(JsValue::from_serde(&empty_social).unwrap())
+        }
+    }
 }
 
 // This is like the `main` function, except for JavaScript.
@@ -246,7 +242,6 @@ pub fn main_js() -> Result<(), JsValue> {
     // It's disabled in release mode so it doesn't bloat up the file size.
     #[cfg(debug_assertions)]
     console_error_panic_hook::set_once();
-
 
     // Your code goes here!
     console::log_1(&JsValue::from_str("Hello world!"));
