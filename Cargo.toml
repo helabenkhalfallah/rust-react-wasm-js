@@ -16,6 +16,10 @@ crate-type = ["cdylib"]
 # so it's only enabled in release mode.
 lto = true
 
+[profile.dev]
+lto = true
+opt-level = 3
+
 [features]
 # If you uncomment this line, it will enable `wee_alloc`:
 #default = ["wee_alloc"]

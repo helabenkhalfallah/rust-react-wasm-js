@@ -48,16 +48,16 @@ class UserListPage extends Component {
     } = wasm || {};
     console.log("wasm : ", wasm);
   
-    // jsRequestUsers(wasm);
-    // wasmRequestUsers(wasm);
+    jsRequestUsers(wasm);
+    wasmRequestUsers(wasm);
 
-    // jsRequestPhotos(wasm);
-    // wasmRequestPhotos(wasm);
+    jsRequestPhotos(wasm);
+    wasmRequestPhotos(wasm);
 
     jsRequestSocials(wasm);
     wasmRequestSocials(wasm);
 
-    // arrayBigTasks(wasm);
+    arrayBigTasks(wasm);
 
     return (
       <div className="App">

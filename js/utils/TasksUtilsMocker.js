@@ -14,16 +14,16 @@ const arrayBigTasks = (wasm) => {
         ]
         const jsMapT0 = performance.now();
         const resultJSMap = moreBigData
-                                .sort((a,b) => a.id - b.id)
-                                .map(item => ({
-                                  album_id: item.album_id,
-                                  id: item.id,
-                                  value: `id: ${item.id}, value: ${item.title}`,
-                                  title: item.title,
-                                  thumbnail_url: item.thumbnail_url,
-                                  url: item.url,
-                                }))
-                                .filter(item => item.id > 200)
+              .sort((a,b) => a.id - b.id)
+              .map(item => ({
+                    album_id: item.album_id,
+                    id: item.id,
+                    value: `id: ${item.id}, value: ${item.title}`,
+                    title: item.title,
+                    thumbnail_url: item.thumbnail_url,
+                    url: item.url,
+              }))
+              .filter(item => item.id > 200)
         const jsMapT1 = performance.now();
         console.log("Call to JS map took " + (jsMapT1 - jsMapT0) + " milliseconds.")
         console.log("resultJSMap : ", resultJSMap); 
